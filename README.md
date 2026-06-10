@@ -45,7 +45,7 @@ Webová aplikácia na sledovanie osobných príjmov a výdavkov. Postavená na P
 | Vrstva | Technológia |
 |---|---|
 | Backend | PHP 8+ |
-| Databáza | MariaDB / MySQL |
+| Databáza | MySQL |
 | Prístup k DB | PDO s prepared statements |
 | Frontend | HTML, CSS, vanilla JavaScript (Fetch API) |
 | Obrázky | GD knižnica (miniatúry) |
