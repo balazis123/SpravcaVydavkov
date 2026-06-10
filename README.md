@@ -1,6 +1,6 @@
 # Správca výdavkov
 
-Webová aplikácia na sledovanie osobných príjmov a výdavkov. Postavená na PHP, PDO a MariaDB s AJAX dashboardom.
+Webová aplikácia na sledovanie osobných príjmov a výdavkov. Postavená na PHP.
 
 ---
 
