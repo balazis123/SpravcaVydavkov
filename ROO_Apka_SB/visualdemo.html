@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Správca výdavkov</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --border-color: #e0e0e0;
+            --primary-color: #000000;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Navigation */
+        header {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 20px;
+            color: var(--primary-color);
+        }
+
+        nav a {
+            color: var(--text-main);
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 14px;
+        }
+
+        nav a:hover {
+            color: var(--primary-color);
+        }
+
+        /* Cards and Sections */
+        section {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 18px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* Dashboard Summary */
+        .summary-grid {
+            display: flex;
+            gap: 20px;
+        }
+
+        .summary-card {
+            flex: 1;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .summary-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: normal;
+        }
+
+        .summary-card p {
+            margin: 0;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .text-success { color: var(--success-color); }
+        .text-danger { color: var(--danger-color); }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: var(--bg-color);
+            color: var(--text-muted);
+            font-weight: normal;
+            font-size: 14px;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="file"],
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background-color: #005bb5;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        /* Category List */
+        .category-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 20px 0;
+        }
+
+        .category-list li {
+            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Profile Section */
+        .profile-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .avatar-placeholder {
+            width: 80px;
+            height: 80px;
+            background-color: var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        .profile-info h3 {
+            margin: 0 0 5px 0;
+        }
+
+        .profile-info p {
+            margin: 0 0 15px 0;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Správca výdavkov</h1>
+        <nav>
+            <a href="#prehlad">Prehľad</a>
+            <a href="#transakcie">Transakcie</a>
+            <a href="#kategorie">Kategórie</a>
+            <a href="#profil">Profil</a>
+            <a href="#odhlasit">Odhlásiť sa</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        
+        <section id="prehlad">
+            <h2>Prehľad</h2>
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <h3>Celkový zostatok</h3>
+                    <p id="sum-balance">0,00 €</p>
+                </div>
+                <div class="summary-card">
+                    <h3>Celkové príjmy</h3>
+                    <p id="sum-income" class="text-success">0,00 €</p>
+                </div>
+                <div class="summary-card">
+                    <h3>Celkové výdavky</h3>
+                    <p id="sum-expense" class="text-danger">0,00 €</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="transakcie">
+            <h2>Transakcie</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Dátum</th>
+                        <th>Popis</th>
+                        <th>Kategória</th>
+                        <th>Suma</th>
+                    </tr>
+                </thead>
+                <tbody id="transactions-body"></tbody>
+            </table>
+        </section>
+
+        <section id="pridat-transakciu">
+            <h2>Pridať transakciu</h2>
+            <form id="transaction-form">
+                <div class="form-row" style="margin-bottom: 15px;">
+                    <div class="form-group">
+                        <label for="suma">Suma (€)</label>
+                        <input type="number" id="suma" name="suma" step="0.01" placeholder="0.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="typ">Typ</label>
+                        <select id="typ" name="typ">
+                            <option value="vydavok">Výdavok</option>
+                            <option value="prijem">Príjem</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="kategoria">Kategória</label>
+                        <select id="kategoria" name="kategoria_id"></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="popis">Popis</label>
+                    <input type="text" id="popis" name="popis" placeholder="Krátky popis transakcie" required>
+                </div>
+                <div class="form-group">
+                    <label for="blocek">Nahrať bloček (voliteľné)</label>
+                    <input type="file" id="blocek" name="blocek" accept="image/*, .pdf">
+                </div>
+                <button type="submit">Pridať transakciu</button>
+            </form>
+        </section>
+
+        <section id="kategorie">
+            <h2>Kategórie</h2>
+            <ul id="category-list" class="category-list"></ul>
+            
+            <form id="category-form" class="form-row">
+                <div class="form-group">
+                    <label for="nova-kategoria">Názov kategórie</label>
+                    <input type="text" id="nova-kategoria" name="nazov" placeholder="Nová kategória" required>
+                </div>
+                <div class="form-group">
+                    <label for="typ-kategorie">Typ</label>
+                    <select id="typ-kategorie" name="typ">
+                        <option value="vydavok">Výdavok</option>
+                        <option value="prijem">Príjem</option>
+                    </select>
+                </div>
+                <button type="submit">Pridať kategóriu</button>
+            </form>
+        </section>
+
+        <section id="profil">
+            <h2>Profil</h2>
+            <div class="profile-container">
+                <div class="avatar-placeholder">Avatar</div>
+                <div class="profile-info">
+                    <h3 id="profile-name">Používateľ</h3>
+                    <p id="profile-email">email@example.com</p>
+                    <button id="edit-profile-btn" type="button">Upraviť profil</button>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        const API_URL = "api.php";
+
+        const moneyFormatter = new Intl.NumberFormat("sk-SK", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+
+        function formatEuro(value) {
+            return moneyFormatter.format(Number(value || 0)) + " €";
+        }
+
+        async function fetchApi(action, options = {}) {
+            const url = API_URL + "?action=" + encodeURIComponent(action);
+            const response = await fetch(url, options);
+            const data = await response.json();
+            if (!response.ok || !data.ok) {
+                throw new Error(data.message || "Chyba API");
+            }
+            return data;
+        }
+
+        function renderSummary(summary) {
+            document.getElementById("sum-balance").textContent = formatEuro(summary.balance);
+            document.getElementById("sum-income").textContent = formatEuro(summary.income);
+            document.getElementById("sum-expense").textContent = formatEuro(summary.expense);
+        }
+
+        function renderTransactions(transactions) {
+            const tbody = document.getElementById("transactions-body");
+            tbody.innerHTML = "";
+
+            if (transactions.length === 0) {
+                tbody.innerHTML = "<tr><td colspan='4'>Zatiaľ žiadne transakcie.</td></tr>";
+                return;
+            }
+
+            transactions.forEach((item) => {
+                const tr = document.createElement("tr");
+                const sign = item.typ === "prijem" ? "+ " : "- ";
+                const cls = item.typ === "prijem" ? "text-success" : "text-danger";
+
+                tr.innerHTML = `
+                    <td>${item.datum}</td>
+                    <td>${item.popis}</td>
+                    <td>${item.kategoria}</td>
+                    <td class="${cls}">${sign}${formatEuro(item.suma)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderCategories(categories) {
+            const list = document.getElementById("category-list");
+            const select = document.getElementById("kategoria");
+
+            list.innerHTML = "";
+            select.innerHTML = "";
+
+            categories.forEach((cat) => {
+                const li = document.createElement("li");
+                li.innerHTML = `<span>${cat.nazov}</span> <span>${cat.typ === "prijem" ? "Príjem" : "Výdavok"}</span>`;
+                list.appendChild(li);
+
+                const option = document.createElement("option");
+                option.value = cat.id;
+                option.textContent = cat.nazov;
+                select.appendChild(option);
+            });
+        }
+
+        function renderProfile(profile) {
+            document.getElementById("profile-name").textContent = profile.name;
+            document.getElementById("profile-email").textContent = profile.email;
+        }
+
+        async function refreshAll() {
+            const payload = await fetchApi("dashboard");
+            renderSummary(payload.data.summary);
+            renderTransactions(payload.data.transactions);
+            renderCategories(payload.data.categories);
+            renderProfile(payload.data.profile);
+        }
+
+        document.getElementById("transaction-form").addEventListener("submit", async (event) => {
+            event.preventDefault();
+            try {
+                const formData = new FormData(event.currentTarget);
+                await fetchApi("add_transaction", {
+                    method: "POST",
+                    body: formData
+                });
+                event.currentTarget.reset();
+                await refreshAll();
+            } catch (error) {
+                alert(error.message);
+            }
+        });
+
+        document.getElementById("category-form").addEventListener("submit", async (event) => {
+            event.preventDefault();
+            try {
+                const formData = new FormData(event.currentTarget);
+                await fetchApi("add_category", {
+                    method: "POST",
+                    body: formData
+                });
+                event.currentTarget.reset();
+                await refreshAll();
+            } catch (error) {
+                alert(error.message);
+            }
+        });
+
+        document.getElementById("edit-profile-btn").addEventListener("click", async () => {
+            const currentName = document.getElementById("profile-name").textContent;
+            const currentEmail = document.getElementById("profile-email").textContent;
+            const name = prompt("Meno:", currentName);
+            if (name === null) {
+                return;
+            }
+            const email = prompt("Email:", currentEmail);
+            if (email === null) {
+                return;
+            }
+
+            try {
+                const formData = new FormData();
+                formData.append("name", name);
+                formData.append("email", email);
+                await fetchApi("update_profile", {
+                    method: "POST",
+                    body: formData
+                });
+                await refreshAll();
+            } catch (error) {
+                alert(error.message);
+            }
+        });
+
+        refreshAll().catch((error) => {
+            alert("Nepodarilo sa načítať dáta: " + error.message);
+        });
+    </script>
+</body>
+</html>
